@@ -116,7 +116,11 @@
             font-weight: 500;
             letter-spacing: 0.1em;
         }
-
+        
+        /* Adiciona a animação de pulso para o logo na Landing Page */
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -137,7 +141,7 @@
 </head>
 <body class="bg-dark-bg">
 
-    <!-- Menu de Navegação (Fixo e Minimalista) -->
+    <!-- Menu de Navegação (Fixo e Minimalista) - Visível sempre, mas estilizado para não interferir na landing -->
     <header class="navbar fixed top-0 left-0 right-0 py-4 px-8 border-b border-[#1F2937]">
         <div class="max-w-7xl mx-auto flex items-center space-x-12">
             <a href="#" class="logo-text">CORINGADAS</a>
@@ -145,6 +149,7 @@
                 <a href="#series-brasileiras" class="hover:text-accent-neon transition duration-200">Séries Brasil</a>
                 <a href="#series-gringas" class="hover:text-accent-neon transition duration-200">Global Fails</a>
                 <a href="#main-player-section" class="hover:text-accent-neon transition duration-200">Destaque</a>
+                <a href="#" onclick="openModal(); return false;" class="hover:text-accent-neon transition duration-200">Sobre o Coringadas</a>
             </nav>
             <div class="flex-grow"></div>
             <div class="text-gray-400 text-sm flex items-center space-x-2">
@@ -153,8 +158,26 @@
             </div>
         </div>
     </header>
+    
+    <!-- LANDING PAGE (Página de Introdução) -->
+    <section id="landing-page" class="fixed inset-0 flex items-center justify-center z-40 bg-dark-bg transition-opacity duration-1000">
+        <div class="text-center p-8 max-w-4xl">
+            <!-- Logo Grande com Efeito -->
+            <h1 class="logo-text text-6xl md:text-8xl mb-6 text-accent-neon tracking-widest animate-pulse">CORINGADAS</h1>
+            <p class="text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-12 font-light">
+                O seu portal minimalista e tecnológico para os melhores fails e vídeos de comédia do Brasil e do Mundo. 
+                Prepare-se para a maratona.
+            </p>
+            <button onclick="enterApp()" class="px-12 py-4 bg-accent-neon text-dark-bg font-bold rounded-full shadow-2xl transition duration-300 transform hover:scale-[1.05] text-xl">
+                ENTRAR NO STREAMING
+            </button>
+        </div>
+        <!-- Garante que os objetos flutuantes sejam visíveis por baixo -->
+        <div class="absolute inset-0 z-[-2]"></div> 
+    </section>
 
-    <div id="app" class="max-w-7xl mx-auto pt-28 pb-8 px-4 sm:px-0"> 
+    <!-- CONTEÚDO PRINCIPAL (Inicialmente escondido) -->
+    <div id="app" class="max-w-7xl mx-auto pt-28 pb-8 px-4 sm:px-0 hidden"> 
         
         <!-- Player Principal / Seção de Destaque -->
         <section id="main-player-section" class="mb-16">
@@ -180,6 +203,23 @@
         <!-- Seções de Categorias (Fileiras Minimalistas) -->
         <div id="categories-container" class="space-y-16 pb-16">
             <!-- As fileiras de vídeo serão injetadas aqui pelo JavaScript -->
+        </div>
+    </div>
+
+    <!-- Modal: Sobre o Coringadas (Fixo e Oculto por padrão) -->
+    <div id="about-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-[100]">
+        <div class="bg-nav-bg border border-accent-neon/30 p-8 rounded-lg max-w-lg w-full shadow-2xl space-y-5">
+            <h3 class="text-3xl section-title text-accent-neon">Sobre o Coringadas</h3>
+            <p class="text-gray-300">
+                O **Coringadas** é o seu destino premium e minimalista para os melhores *fails* e vídeos de comédia da internet. 
+                Nós transformamos as clássicas "Vídeo Cassetadas" em uma experiência de *streaming* moderna e suave.
+            </p>
+            <p class="text-gray-400 text-sm italic">
+                Desenvolvido com tecnologia de ponta (Tailwind CSS e JavaScript puro) e inspirado na estética minimalista e tecnológica das grandes plataformas.
+            </p>
+            <button onclick="closeModal()" class="mt-6 px-6 py-2 bg-accent-neon text-dark-bg font-bold rounded-md hover:bg-accent-neon/80 transition duration-200">
+                Fechar
+            </button>
         </div>
     </div>
 
@@ -241,6 +281,42 @@
         const playButtonTextElement = document.getElementById('play-button-text');
 
         /**
+         * FUNÇÃO PRINCIPAL: Entra na aplicação, escondendo a landing page.
+         */
+        function enterApp() {
+            const landingPage = document.getElementById('landing-page');
+            const mainApp = document.getElementById('app');
+
+            // 1. Esconde o fundo da landing page com uma transição suave
+            landingPage.style.opacity = '0';
+
+            // 2. Após a transição (1 segundo), esconde o elemento e mostra o app
+            setTimeout(() => {
+                landingPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+            }, 1000); 
+
+            console.log('[APP] Usuário entrou no Coringadas.');
+        }
+
+        /**
+         * Abre a janela modal "Sobre o Coringadas".
+         */
+        function openModal() {
+            document.getElementById('about-modal').classList.remove('hidden');
+            document.getElementById('about-modal').classList.add('flex');
+        }
+
+        /**
+         * Fecha a janela modal "Sobre o Coringadas".
+         */
+        function closeModal() {
+            document.getElementById('about-modal').classList.add('hidden');
+            document.getElementById('about-modal').classList.remove('flex');
+        }
+
+
+        /**
          * Renderiza todas as fileiras de vídeos no DOM.
          */
         function renderCategories() {
@@ -299,7 +375,7 @@
          */
         function playVideo(video) {
             
-            // 1. Atualiza o iframe do player principal
+            // 1. Atualiza o iframe do player principal com autoplay=1
             const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`; 
             iframeElement.src = embedUrl;
 
@@ -310,6 +386,8 @@
 
             // 3. Rola a página para o player principal 
             document.getElementById('main-player-section').scrollIntoView({ behavior: 'smooth' });
+            
+            console.log(`[PLAY] Vídeo carregado: ${video.title} (ID: ${video.id})`);
         }
 
         /**
