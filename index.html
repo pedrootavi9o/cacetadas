@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maratona de Cacetadas Retrô</title>
+    <!-- Carregando Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Configuração de fonte para um visual limpo */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        /* Adicionando uma fonte retrô chamativa para o título principal */
+        @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap'); 
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            /* Fundo com gradiente quente no estilo 70s (marrom, terracota, laranja) */
+            background-color: #451A03; 
+            background-image: linear-gradient(135deg, #451A03 0%, #78350F 50%, #F97316 100%); 
+        }
+        /* Efeito de sombra e contorno no texto do título principal para um visual retrô */
+        .retro-title {
+            font-family: 'Alfa Slab One', cursive; /* Fonte mais chamativa */
+            color: #FEF3C7; /* Amarelo/Creme claro */
+            /* Camadas de sombra para o efeito 3D dos anos 70 */
+            text-shadow: 
+                4px 4px 0px #F59E0B, /* Sombra dourada */
+                6px 6px 0px #B45309; /* Sombra marrom mais escura */
+        }
+        /* Garantindo que o iframe do vídeo seja responsivo */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* Proporção 16:9 */
+            background-color: #2c160b; /* Marrom escuro */
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7); /* Sombra mais pesada */
+            border: 4px solid #F59E0B; /* Borda dourada/âmbar de destaque */
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* Estilo para a barra de rolagem da playlist */
+        .playlist-scroll {
+            max-height: calc(100vh - 12rem); /* Altura ajustada para caber na tela */
+            overflow-y: auto;
+        }
+        .playlist-scroll::-webkit-scrollbar {
+            width: 8px; 
+        }
+        .playlist-scroll::-webkit-scrollbar-thumb {
+            background: #F97316; /* Laranja vibrante */
+            border-radius: 4px;
+        }
+        .playlist-scroll::-webkit-scrollbar-track {
+            background: #78350F; /* Marrom de fundo */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Paleta 70s: Brown, Orange, Cream/Gold
+                        'primary-bg-70s': '#451A03', // Marrom Escuro (base de fundo de elementos)
+                        'secondary-bg-70s': '#78350F', // Marrom Médio/Terracota (fundo do card)
+                        'accent-70s': '#F97316', // Laranja Vibrante (Destaque principal)
+                        'highlight-70s': '#F59E0B', // Dourado/Âmbar (Bordas e textos secundários)
+                        'text-cream': '#FEF3C7', // Creme claro (Cor principal do texto)
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-text-cream p-4 sm:p-8">
+
+    <div id="app" class="max-w-7xl mx-auto">
+        <!-- Título Principal com Estilo Retrô -->
+        <header class="mb-8 sm:mb-10 text-center">
+            <h1 class="retro-title text-6xl sm:text-7xl font-extrabold leading-none tracking-wider">Maratona de Cacetadas</h1>
+            <p class="text-text-cream mt-4 text-xl bg-secondary-bg-70s inline-block px-4 py-2 rounded-full shadow-lg border-2 border-highlight-70s">A melhor coleção retrô de trapalhadas!</p>
+        </header>
+
+        <!-- Layout Principal: Vídeo (Esquerda/Topo) e Playlist (Direita/Rodapé) -->
+        <main class="flex flex-col lg:flex-row gap-8">
+
+            <!-- 1. Player e Informações do Vídeo -->
+            <div class="lg:w-3/4">
+                <div class="video-container">
+                    <iframe
+                        id="video-player"
+                        src=""
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+                <!-- Detalhes do Vídeo com Cores 70s -->
+                <div class="bg-secondary-bg-70s p-6 mt-6 rounded-xl shadow-2xl border-4 border-highlight-70s">
+                    <h2 id="current-title" class="text-3xl font-bold mb-2 text-text-cream">Título do Vídeo Atual</h2>
+                    <p id="current-description" class="text-text-cream/80 mb-4">Descrição curta do vídeo que está sendo reproduzido no momento.</p>
+
+                    <!-- Botão Chunky Retrô -->
+                    <button
+                        id="next-button"
+                        class="mt-4 w-full sm:w-auto px-8 py-4 bg-accent-70s text-primary-bg-70s font-extrabold rounded-lg text-lg
+                               hover:bg-highlight-70s transition duration-300 shadow-[4px_4px_0_#B45309] border-2 border-primary-bg-70s
+                               transform hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0_#B45309]"
+                        onclick="playNextVideo()">
+                        PRÓXIMA CACETADA ▶️
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Playlist Lateral -->
+            <aside class="lg:w-1/4">
+                <div class="bg-secondary-bg-70s p-4 rounded-xl shadow-2xl border-4 border-highlight-70s">
+                    <h3 class="text-2xl font-bold mb-4 border-b-2 border-highlight-70s pb-2 text-text-cream">Playlist Quente 🔥</h3>
+                    <div id="playlist" class="playlist-scroll space-y-3">
+                        <!-- Itens da playlist serão injetados aqui pelo JavaScript -->
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        // Variáveis globais para rastrear o estado
+        let currentVideoIndex = 0;
+
+        // LISTA DE VÍDEOS REAIS ATUALIZADA
+        const videoList = [
+            { 
+                id: "BNiTVsAlzlc", 
+                title: "O Melhor do Ano (80 Minutos)", 
+                description: "80 minutos hilários de caos e acidentes. Os melhores fails de 2021!" 
+            },
+            { 
+                id: "V_cRKk7y4OA", 
+                title: "Trapalhadas na Piscina", 
+                description: "Compilação definitiva de trapalhadas na piscina. A água sempre vence!" 
+            },
+            { 
+                id: "t71GphcRrr4", 
+                title: "Fails de Verão 2025 (Brutal)", 
+                description: "As cacetadas de verão mais loucas e recentes. Não tente não rir!" 
+            },
+            { 
+                id: "-GJFSmpZjCw", 
+                title: "O Melhor do Ano (Até Agora)", 
+                description: "Fails tão bons que farão você se encolher! O melhor do ano em 50 minutos." 
+            },
+            { 
+                id: "gBpf17FBYE0", 
+                title: "Cegado pela Falha! | AFV", 
+                description: "A mais pura comédia de vídeo caseiro. Cacetadas que cegam!" 
+            },
+        ];
+
+        /**
+         * Carrega um vídeo específico no player principal.
+         * @param {number} index O índice do vídeo na lista.
+         */
+        function loadVideo(index) {
+            // Garantir que o índice seja válido
+            if (index < 0 || index >= videoList.length) {
+                console.error("Índice de vídeo inválido:", index);
+                index = 0;
+            }
+
+            const video = videoList[index];
+            currentVideoIndex = index;
+
+            // 1. Atualizar o player (iframe)
+            const iframe = document.getElementById('video-player');
+            // AUTOPLAY removido/setado para 0 para evitar problemas de bloqueio do navegador. 
+            // O vídeo começa a tocar quando o usuário interage (clica).
+            const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=0&rel=0`; 
+            iframe.src = embedUrl;
+
+            // 2. Atualizar os detalhes do vídeo
+            document.getElementById('current-title').textContent = video.title;
+            document.getElementById('current-description').textContent = video.description;
+
+            // 3. Destacar o item ativo na playlist (Estilo Retrô)
+            document.querySelectorAll('.playlist-item').forEach(item => {
+                // Remove estilos ativos e mantém o estilo normal
+                item.classList.remove('bg-accent-70s', 'border-highlight-70s', 'shadow-inner');
+                item.classList.add('bg-primary-bg-70s', 'hover:bg-[#5C2707]'); 
+            });
+
+            const activeItem = document.getElementById(`video-${index}`);
+            if (activeItem) {
+                // Adiciona estilos de destaque
+                activeItem.classList.add('bg-accent-70s', 'border-highlight-70s', 'shadow-inner');
+                activeItem.classList.remove('bg-primary-bg-70s', 'hover:bg-[#5C2707]');
+                // Rolar para o item ativo se ele estiver fora da tela
+                activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        /**
+         * Avança para o próximo vídeo da playlist.
+         */
+        function playNextVideo() {
+            let nextIndex = currentVideoIndex + 1;
+            // Se chegou ao fim da lista, volta para o início (loop de maratona)
+            if (nextIndex >= videoList.length) {
+                nextIndex = 0;
+            }
+            loadVideo(nextIndex);
+        }
+
+        /**
+         * Cria e insere a lista de vídeos no DOM.
+         */
+        function renderPlaylist() {
+            const playlistContainer = document.getElementById('playlist');
+            playlistContainer.innerHTML = ''; 
+
+            videoList.forEach((video, index) => {
+                const item = document.createElement('div');
+                item.id = `video-${index}`;
+                // Estilo retrô: mais chunky, com borda laranja
+                item.className = `playlist-item p-3 rounded-lg border-l-4 border-highlight-70s transition duration-200 cursor-pointer text-sm font-medium
+                                 bg-primary-bg-70s hover:bg-[#5C2707] shadow-lg text-text-cream/90`; 
+
+                item.innerHTML = `
+                    <p class="text-text-cream truncate font-semibold">${video.title}</p>
+                    <p class="text-highlight-70s text-xs mt-1">#${index + 1} - Clique para Maratona</p>
+                `;
+
+                // Adiciona o evento de clique para carregar o vídeo
+                item.addEventListener('click', () => loadVideo(index));
+
+                playlistContainer.appendChild(item);
+            });
+        }
+
+        // Inicialização:
+        window.onload = function() {
+            // 1. Renderizar a playlist
+            renderPlaylist();
+
+            // 2. Carregar o primeiro vídeo
+            loadVideo(0);
+            
+            // O timer de simulação de maratona foi removido porque o autoplay do YouTube é instável.
+            // Agora, você controla totalmente a maratona clicando no botão "PRÓXIMA CACETADA" ou na playlist.
+
+            console.log("Maratona de Cacetadas Retrô iniciada! Clique na playlist ou no botão para começar.");
+        };
+    </script>
+</body>
+</html>
